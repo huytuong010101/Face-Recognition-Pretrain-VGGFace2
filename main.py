@@ -7,6 +7,7 @@ from io import BytesIO
 from PIL import Image
 import numpy as np
 import cv2
+import processing_face_data
 
 # Constant
 CAM_IP = 'http://192.168.1.29'
@@ -14,11 +15,20 @@ CAM_USER = 'admin'
 CAM_PASS = 'cam12345'
 
 
+# Encoding images -----------------------------------------------------
+print("Start processing faces...")
+processing_face_data.crop_faces()
+print("Start encoding faces...")
+processing_face_data.encode_faces()
+print("Prepare data done")
+# Loading database ----------------------------------------------------
+
 with open("encode_face.pkl", "rb") as f:
     data = pickle.load(f)
     x, y = data["x"], data["y"]
+print("Loaded database")
+# Start stream
 cam = Client(CAM_IP, CAM_USER, CAM_PASS , timeout=30)
-
 while(True):
     response = cam.Streaming.channels[102].picture(method='get', type='opaque_data')
 
